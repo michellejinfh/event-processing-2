@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Example</title>
+    <style>
+        div.container {
+        width: 880px;
+        border: 1px solid gray;
+        padding: 1em;
+        }
+    </style>
+</head>
+<body><div class="container"><h1>Data Example</h1><p>The data example is an abstract example showing off most of OpenSpaces features, namely:</p>
+<ul>
+  <li>The definition of two processing units, a processor and a feeder,  sharing the same domain model.</li>
+  <li>Definition of a Space within the processing unit, with different schemas  and SLA.</li>
+  <li>Show cases for OpenSpaces Events module, including the polling container  and notify container.</li>
+  <li>Usage of OpenSpaces Remoting.</li>
+  <li>Usage of GigaSpaces local view within a the processing unit.</li>
+  <li>Usage of GigaSpaces JMS in OpenSpaces</li>
+  <li>Usage of the MessageConverter JMS feature that allows writing POJOs to  the space by using the JMS API.</li>
+</ul><h2>STRUCTURE</h2><p>The example has three modules:</p>
+<ul>
+  <li><p>The Common module includes the domain model and a data processor interface  that are shared between the feeder and the processor modules.</p></li>
+  <li><p>The Processor module is a processing unit with the main task of processing  unprocessed data objects. The processing of data objects is done both  using event container and remoting.</p></li>
+  <li><p>The Feeder module is a processing unit that contains two feeders, a standard  space feeder and a JMS feeder, that feeds unprocessed data objects which  are in turn processed by the processor module. The standard space feeder  feeds unprocessed data objects both by directly writing them to the space  and by using OpenSpaces Remoting. The JMS feeder uses JMS API to feed  unprocessed data objects. It does so by using a MessageConverter that  converts JMS ObjectMessages to the data objects.</p></li>
+</ul><h2>BUILD AND DEPLOYMENT</h2><p>The example uses maven as its build tool. It comes with a build script that runs maven automatically. Running the build script with no parameters within the current directory will list all the relevant tasks that can be run with this example.</p><p>The available commands are:</p>
+<ul>
+  <li>clean - Cleans all output dirs</li>
+  <li>compile - Builds all; don't create JARs</li>
+  <li>package - Builds the distribution</li>
+  <li>deploy - Deploys the processor and the feeder onto the service grid</li>
+  <li>undeploy - Undeploys running processing units</li>
+  <li>intellij - Creates run configuration for IntelliJ IDE</li>
+</ul><p>Running <code>build.(sh/bat) compile</code> will compile all the different modules. In case of the Processor and Feeder modules, it will compile the classes directly into their respective PU structure.</p><p>Running <code>build.(sh/bat) package</code> will finalize the processing unit structure of both the Processor and the Feeder by copying the Common module jar file into the 'lib' directory within the processing unit structure. In case of the processor module, it will copy the jar file to <code>/examples/data-app/event-processing/processor/target/data-processor/lib</code>, and will make <code>/examples/data-app/event-processing/processor/target/data-processor/</code> a ready to use processing unit.</p><p>Running <code>build.(sh/bat) intellij</code> will create run configuration for IntelliJ IDE, allowing you to run the Processor and the Feeder using IntelliJ run (or debug) targets (to run from intellij the mvn profile IDE should be on).</p><p>In order to deploy the data example onto the Service Grid, simply run XAP agent with manager <code>$XAP_HOME/bin/gs.(sh|bat) host run-agent --auto --gsc=2</code> which will start a Manager ,2 GSCs and GS-WEBUI note: we need two GSCs because of the SLA defined within the processor module.</p><p>run <code>build.(sh|bat) deploy</code> - This will deploy the processor.jar and the feeder.jar into the running GSM. This will cause the feeder to be deployed into one of the GSC and start feeding unprocessed data into the two processing units. Run the GS-UI in order to see the 4 PU instances deployed (two partitions, each with one backup).</p><p>Running <code>build.(sh|bat) undeploy</code> will remove all of the processing units of this example from the service grid.</p><p>Another option to deploy the example can be using the CLI 'deploy' option. <code>$XAP_HOME/bin/gs.(sh|bat) pu deploy data-processor ../examples/data-app/event-processing/processor/target/data-processor.jar</code></p><p>The number of partitions can be configured when deploying using the <code>--partitions=&lt;NUM_OF_PARTITIONS&gt;</code></p><p>In order to run the feeder using the CLI: <code>$XAP_HOME/bin/gs.(sh|bat) pu deploy ../examples/data-app/event-processing/feeder/target/data-feeder.jar</code></p><p>Some ways to play with the examples can be:</p>
+<ol>
+  <li><p>Start another GSC (via the GS-UI) and relocate (click and drag on GS-UI) the feeder to the other GSC.</p></li>
+  <li><p>Kill one of the GSC that runs the Processor processing unit. The missing instance that was killed will be re-deployed on a new GSC. Based on the SLA, each partition (primary and backup) of an instance will run on different GSCs (i.e. JVMs).</p></li>
+</ol></div></body></html>
